@@ -1,51 +1,34 @@
-Student Grade Management System
-CSA1021 - Mini Project (VIT Bhopal)
-
-Idea: keep student records in a dictionary, store each student's
-marks in a list, calculate total/average using arithmetic operators,
-and decide the grade using if-elif-else. A set is used just to make
-sure no roll number gets added twice.
-"""
-
-# main "database" - roll number is the key, value is another dictionary
-# containing name and a list of marks (this is the nested dictionary
-# concept from the dictionary slides)
 students = {}
-
-# keeps track of roll numbers already used, so we don't allow duplicates
 used_rolls = set()
 
 
-def calculate_grade(average):
-    """Decide grade based on average marks using chained if-elif-else."""
-    if average >= 90:
-        grade = "A+"
-    elif average >= 80:
-        grade = "A"
-    elif average >= 70:
-        grade = "B"
-    elif average >= 60:
-        grade = "C"
-    elif average >= 50:
-        grade = "D"
-    elif average >= 40:
-        grade = "E"
+def cg(avg):
+    if avg >= 90:
+        return "A+"
+    elif avg >= 80:
+        return "A"
+    elif avg >= 70:
+        return "B"
+    elif avg >= 60:
+        return "C"
+    elif avg >= 50:
+        return "D"
+    elif avg >= 40:
+        return "E"
     else:
-        grade = "F"
-    return grade
+        return "F"
 
 
-def add_student():
+def ast():
     roll = input("Enter roll number: ").strip()
 
-    # basic validation using membership operator ('in')
     if roll in used_rolls:
         print("A student with this roll number already exists.\n")
         return
 
     name = input("Enter student name: ").strip()
+    marks = []
 
-    marks = []  # this list acts like the "array" of marks
     try:
         n = int(input("How many subjects? "))
     except ValueError:
@@ -55,68 +38,92 @@ def add_student():
     for i in range(n):
         while True:
             try:
-                m = float(input(f"  Enter marks for subject {i + 1}: "))
+                m = float(input("  Enter marks for subject " + str(i + 1) + ": "))
+
                 if m < 0 or m > 100:
                     print("  Marks should be between 0 and 100.")
-                    continue
-                break
+                else:
+                    marks.append(m)
+                    break
+
             except ValueError:
-                print("  That's not a number, try again.")
-        marks.append(m)
+                print("  Please enter a number.")
 
     total = sum(marks)
-    average = total / len(marks) if marks else 0
-    grade = calculate_grade(average)
 
-    # store everything as a nested dictionary
+    if len(marks) > 0:
+        avg = total / len(marks)
+    else:
+        avg = 0
+
+    grade = cg(avg)
+
     students[roll] = {
         "name": name,
         "marks": marks,
         "total": total,
-        "average": average,
-        "grade": grade,
+        "average": avg,
+        "grade": grade
     }
+
     used_rolls.add(roll)
 
-    print(f"Student {name} added successfully. Grade: {grade}\n")
-
-
-def view_all_students():
-    if not students:
-        print("No student records yet.\n")
-        return
-
-    print("\n{:<10}{:<15}{:<10}{:<10}{:<6}".format(
-        "Roll", "Name", "Total", "Average", "Grade"))
-    print("-" * 55)
-    for roll, info in students.items():
-        print("{:<10}{:<15}{:<10}{:<10.2f}{:<6}".format(
-            roll, info["name"], info["total"], info["average"], info["grade"]))
+    print("Student", name, "added successfully. Grade:", grade)
     print()
 
 
-def search_student():
-    roll = input("Enter roll number to search: ").strip()
-    info = students.get(roll)  # get() returns None if key not found
+def vas():
+    if len(students) == 0:
+        print("No student records yet.\n")
+        return
 
-    if info is None:
+    print()
+    print("{:<10}{:<15}{:<10}{:<10}{:<6}".format(
+        "Roll", "Name", "Total", "Average", "Grade"
+    ))
+    print("-" * 55)
+
+    for roll in students:
+        s = students[roll]
+
+        print("{:<10}{:<15}{:<10}{:<10.2f}{:<6}".format(
+            roll,
+            s["name"],
+            s["total"],
+            s["average"],
+            s["grade"]
+        ))
+
+    print()
+
+
+def ss():
+    roll = input("Enter roll number to search: ").strip()
+
+    if roll not in students:
         print("No student found with that roll number.\n")
         return
 
-    print(f"\nName    : {info['name']}")
-    print(f"Marks   : {info['marks']}")
-    print(f"Total   : {info['total']}")
-    print(f"Average : {info['average']:.2f}")
-    print(f"Grade   : {info['grade']}\n")
+    s = students[roll]
+
+    print()
+    print("Name    :", s["name"])
+    print("Marks   :", s["marks"])
+    print("Total   :", s["total"])
+    print("Average :", round(s["average"], 2))
+    print("Grade   :", s["grade"])
+    print()
 
 
-def update_marks():
+def um():
     roll = input("Enter roll number to update: ").strip()
+
     if roll not in students:
         print("No such student.\n")
         return
 
     marks = []
+
     try:
         n = int(input("How many subjects (re-enter all marks)? "))
     except ValueError:
@@ -124,44 +131,67 @@ def update_marks():
         return
 
     for i in range(n):
-        m = float(input(f"  New marks for subject {i + 1}: "))
-        marks.append(m)
+        try:
+            m = float(input("  New marks for subject " + str(i + 1) + ": "))
+            marks.append(m)
+        except ValueError:
+            print("Invalid marks entered.")
+            return
 
     total = sum(marks)
-    average = total / len(marks) if marks else 0
-    grade = calculate_grade(average)
+
+    if len(marks) > 0:
+        avg = total / len(marks)
+    else:
+        avg = 0
+
+    grade = cg(avg)
 
     students[roll]["marks"] = marks
     students[roll]["total"] = total
-    students[roll]["average"] = average
+    students[roll]["average"] = avg
     students[roll]["grade"] = grade
 
     print("Record updated.\n")
 
 
-def delete_student():
+def ds():
     roll = input("Enter roll number to delete: ").strip()
+
     if roll in students:
-        students.pop(roll)      # remove from dictionary
-        used_rolls.discard(roll)  # remove from the roll-number set
+        students.pop(roll)
+        used_rolls.discard(roll)
         print("Student record deleted.\n")
     else:
         print("No such student found.\n")
 
 
-def class_topper():
-    if not students:
+def ct():
+    if len(students) == 0:
         print("No records available.\n")
         return
 
-    # find the student with the highest average
-    topper_roll = max(students, key=lambda r: students[r]["average"])
-    topper = students[topper_roll]
-    print(f"\nClass Topper: {topper['name']} (Roll: {topper_roll}), "
-          f"Average: {topper['average']:.2f}\n")
+    top_roll = None
+    highest = -1
+
+    for roll in students:
+        if students[roll]["average"] > highest:
+            highest = students[roll]["average"]
+            top_roll = roll
+
+    s = students[top_roll]
+
+    print()
+    print(
+        "Class Topper:",
+        s["name"],
+        "(Roll:", top_roll + "),",
+        "Average:", round(s["average"], 2)
+    )
+    print()
 
 
-def show_menu():
+def sm():
     print("=" * 40)
     print(" STUDENT GRADE MANAGEMENT SYSTEM")
     print("=" * 40)
@@ -176,27 +206,33 @@ def show_menu():
 
 def main():
     while True:
-        show_menu()
+        sm()
         choice = input("Enter your choice (1-7): ").strip()
 
         if choice == "1":
-            add_student()
+            ast()
+
         elif choice == "2":
-            view_all_students()
+            vas()
+
         elif choice == "3":
-            search_student()
+            ss()
+
         elif choice == "4":
-            update_marks()
+            um()
+
         elif choice == "5":
-            delete_student()
+            ds()
+
         elif choice == "6":
-            class_topper()
+            ct()
+
         elif choice == "7":
             print("Exiting program. Goodbye!")
-            break  # exits the while loop
+            break
+
         else:
             print("Invalid choice, please try again.\n")
-            continue
 
 
 if __name__ == "__main__":
