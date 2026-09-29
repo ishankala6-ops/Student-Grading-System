@@ -1,239 +1,253 @@
-students = {}
-used_rolls = set()
+## Flowchart
+
+```mermaid
+flowchart TD
+
+    Start([Start]) --> Menu[Display Main Menu]
+    Menu --> Choice{Select Option}
+
+    Choice -->|1. Add Student| AddRoll[Enter Roll Number]
+    AddRoll --> RollExists{Roll Number Exists?}
+
+    RollExists -->|Yes| Duplicate[Display Duplicate Error]
+    Duplicate --> Menu
+
+    RollExists -->|No| Name[Enter Student Name]
+    Name --> Subjects[Enter Number of Subjects]
+    Subjects --> Marks[Enter Marks]
+    Marks --> ValidMarks{Valid Marks?}
+
+    ValidMarks -->|No| Marks
+    ValidMarks -->|Yes| Total[Calculate Total]
+    Total --> Average[Calculate Average]
+    Average --> Grade[Calculate Grade]
+    Grade --> Store[Store Student Record]
+    Store --> Menu
+
+    Choice -->|2. View Students| View[Display All Student Records]
+    View --> Menu
+
+    Choice -->|3. Search Student| SearchRoll[Enter Roll Number]
+    SearchRoll --> SearchFound{Student Found?}
+
+    SearchFound -->|Yes| Details[Display Student Details]
+    SearchFound -->|No| NotFound1[Display Not Found]
+
+    Details --> Menu
+    NotFound1 --> Menu
+
+    Choice -->|4. Update Marks| UpdateRoll[Enter Roll Number]
+    UpdateRoll --> UpdateFound{Student Found?}
+
+    UpdateFound -->|Yes| NewMarks[Enter New Marks]
+    NewMarks --> Recalculate[Recalculate Total, Average and Grade]
+    Recalculate --> Menu
+
+    UpdateFound -->|No| NotFound2[Display Not Found]
+    NotFound2 --> Menu
+
+    Choice -->|5. Delete Student| DeleteRoll[Enter Roll Number]
+    DeleteRoll --> DeleteFound{Student Found?}
+
+    DeleteFound -->|Yes| DeleteRecord[Delete Student Record]
+    DeleteRecord --> Menu
+
+    DeleteFound -->|No| NotFound3[Display Not Found]
+    NotFound3 --> Menu
+
+    Choice -->|6. Show Class Topper| Compare[Compare Student Averages]
+    Compare --> Highest[Display Highest Average]
+    Highest --> Menu
+
+    Choice -->|7. Exit| End([End])
+
+    Choice -->|Invalid Option| Invalid[Display Invalid Choice]
+    Invalid --> Menu
+```
+
+# Student Grading System
+
+A simple console-based Student Grading System developed in Python as a college programming project. The program is designed to manage student academic records through a menu-driven command-line interface. It allows users to add students, enter and manage their marks, calculate total and average marks, assign grades, search for students, update marks, delete records, and identify the class topper.
+
+## Introduction
+
+The Student Grading System is a Python-based application developed to simplify basic student record and grade management. Instead of manually calculating totals, averages, and grades, the program performs these calculations automatically based on the marks entered by the user.
+
+The project demonstrates the use of fundamental Python programming concepts such as functions, dictionaries, sets, loops, conditional statements, input handling, validation, calculations, and menu-driven programming.
+
+The application runs entirely through the command line or terminal and does not require any external Python libraries.
+
+## Features
+
+The Student Grading System provides several useful features for managing student records.
+
+### Add Student
+
+The user can add a new student by entering:
+
+- Roll number
+- Student name
+- Number of subjects
+- Marks for each subject
+
+The program automatically calculates the student's total marks, average marks, and grade. It also checks whether the entered roll number already exists to prevent duplicate student records.
+
+### View All Students
+
+The program can display all currently stored student records in a table containing:
+
+- Roll number
+- Student name
+- Total marks
+- Average marks
+- Grade
+
+### Search Student
+
+The user can search for a particular student by entering their roll number. If the student exists, the program displays their name, marks, total, average, and grade.
+
+### Update Marks
+
+The marks of an existing student can be updated. After new marks are entered, the program recalculates the total, average, and grade.
+
+### Delete Student
+
+A student's record can be deleted by entering their roll number.
+
+### Show Class Topper
+
+The program compares the average marks of all students and identifies the student with the highest average.
+
+### Grade Calculation
+
+Grades are assigned according to the student's average marks:
+
+| Average Marks | Grade |
+|---------------|-------|
+| 90 - 100 | A+ |
+| 80 - 89 | A |
+| 70 - 79 | B |
+| 60 - 69 | C |
+| 50 - 59 | D |
+| 40 - 49 | E |
+| Below 40 | F |
+
+## Technologies Used
+
+- Python
+- Command Line / Terminal
+- Python Dictionary
+- Python Set
+- Git
+- GitHub
+
+No external Python libraries are required to run the project.
+
+## Installation
+
+Before running the project, make sure Python is installed on your computer.
+
+To check the installed version of Python, open Command Prompt or Terminal and enter:
+
+```bash
+python --version
 
 
-def cg(avg):
-    if avg >= 90:
-        return "A+"
-    elif avg >= 80:
-        return "A"
-    elif avg >= 70:
-        return "B"
-    elif avg >= 60:
-        return "C"
-    elif avg >= 50:
-        return "D"
-    elif avg >= 40:
-        return "E"
-    else:
-        return "F"
+Start
+  |
+  v
+Display Main Menu
+  |
+  v
+Select an Option
+  |
+  +----------------------+
+  |                      |
+  v                      v
+Add Student          View Students
+  |                      |
+  v                      v
+Enter Details        Display Records
+  |                      |
+  v                      |
+Calculate Total          |
+  |                      |
+  v                      |
+Calculate Average        |
+  |                      |
+  v                      |
+Calculate Grade          |
+  |                      |
+  +----------+-----------+
+             |
+             v
+        Return to Menu
+             |
+             v
+       Select Another
+          Option
+             |
+             v
+           Exit
+
+========================================
+ STUDENT GRADE MANAGEMENT SYSTEM
+========================================
+1. Add Student
+2. View All Students
+3. Search Student
+4. Update Marks
+5. Delete Student
+6. Show Class Topper
+7. Exit
+
+Enter your choice (1-7): 1
+
+Enter roll number: 101
+Enter student name: Rahul
+How many subjects? 3
+
+  Enter marks for subject 1: 85
+  Enter marks for subject 2: 90
+  Enter marks for subject 3: 80
+
+Student Rahul added successfully. Grade: A
 
 
-def ast():
-    roll = input("Enter roll number: ").strip()
+========================================
+ STUDENT GRADE MANAGEMENT SYSTEM
+========================================
+1. Add Student
+2. View All Students
+3. Search Student
+4. Update Marks
+5. Delete Student
+6. Show Class Topper
+7. Exit
 
-    if roll in used_rolls:
-        print("A student with this roll number already exists.\n")
-        return
+Enter your choice (1-7): 2
 
-    name = input("Enter student name: ").strip()
-    marks = []
-
-    try:
-        n = int(input("How many subjects? "))
-    except ValueError:
-        print("Please enter a valid number.\n")
-        return
-
-    for i in range(n):
-        while True:
-            try:
-                m = float(input("  Enter marks for subject " + str(i + 1) + ": "))
-
-                if m < 0 or m > 100:
-                    print("  Marks should be between 0 and 100.")
-                else:
-                    marks.append(m)
-                    break
-
-            except ValueError:
-                print("  Please enter a number.")
-
-    total = sum(marks)
-
-    if len(marks) > 0:
-        avg = total / len(marks)
-    else:
-        avg = 0
-
-    grade = cg(avg)
-
-    students[roll] = {
-        "name": name,
-        "marks": marks,
-        "total": total,
-        "average": avg,
-        "grade": grade
-    }
-
-    used_rolls.add(roll)
-
-    print("Student", name, "added successfully. Grade:", grade)
-    print()
+Roll      Name           Total     Average   Grade
+-------------------------------------------------------
+101       Rahul          255       85.00     A
 
 
-def vas():
-    if len(students) == 0:
-        print("No student records yet.\n")
-        return
+Enter your choice (1-7): 3
 
-    print()
-    print("{:<10}{:<15}{:<10}{:<10}{:<6}".format(
-        "Roll", "Name", "Total", "Average", "Grade"
-    ))
-    print("-" * 55)
+Enter roll number to search: 101
 
-    for roll in students:
-        s = students[roll]
-
-        print("{:<10}{:<15}{:<10}{:<10.2f}{:<6}".format(
-            roll,
-            s["name"],
-            s["total"],
-            s["average"],
-            s["grade"]
-        ))
-
-    print()
+Name    : Rahul
+Marks   : [85.0, 90.0, 80.0]
+Total   : 255.0
+Average : 85.0
+Grade   : A
 
 
-def ss():
-    roll = input("Enter roll number to search: ").strip()
+Enter your choice (1-7): 6
 
-    if roll not in students:
-        print("No student found with that roll number.\n")
-        return
-
-    s = students[roll]
-
-    print()
-    print("Name    :", s["name"])
-    print("Marks   :", s["marks"])
-    print("Total   :", s["total"])
-    print("Average :", round(s["average"], 2))
-    print("Grade   :", s["grade"])
-    print()
+Class Topper: Rahul (Roll: 101), Average: 85.0
 
 
-def um():
-    roll = input("Enter roll number to update: ").strip()
+Enter your choice (1-7): 7
 
-    if roll not in students:
-        print("No such student.\n")
-        return
-
-    marks = []
-
-    try:
-        n = int(input("How many subjects (re-enter all marks)? "))
-    except ValueError:
-        print("Please enter a valid number.\n")
-        return
-
-    for i in range(n):
-        try:
-            m = float(input("  New marks for subject " + str(i + 1) + ": "))
-            marks.append(m)
-        except ValueError:
-            print("Invalid marks entered.")
-            return
-
-    total = sum(marks)
-
-    if len(marks) > 0:
-        avg = total / len(marks)
-    else:
-        avg = 0
-
-    grade = cg(avg)
-
-    students[roll]["marks"] = marks
-    students[roll]["total"] = total
-    students[roll]["average"] = avg
-    students[roll]["grade"] = grade
-
-    print("Record updated.\n")
-
-
-def ds():
-    roll = input("Enter roll number to delete: ").strip()
-
-    if roll in students:
-        students.pop(roll)
-        used_rolls.discard(roll)
-        print("Student record deleted.\n")
-    else:
-        print("No such student found.\n")
-
-
-def ct():
-    if len(students) == 0:
-        print("No records available.\n")
-        return
-
-    top_roll = None
-    highest = -1
-
-    for roll in students:
-        if students[roll]["average"] > highest:
-            highest = students[roll]["average"]
-            top_roll = roll
-
-    s = students[top_roll]
-
-    print()
-    print(
-        "Class Topper:",
-        s["name"],
-        "(Roll:", top_roll + "),",
-        "Average:", round(s["average"], 2)
-    )
-    print()
-
-
-def sm():
-    print("=" * 40)
-    print(" STUDENT GRADE MANAGEMENT SYSTEM")
-    print("=" * 40)
-    print("1. Add Student")
-    print("2. View All Students")
-    print("3. Search Student")
-    print("4. Update Marks")
-    print("5. Delete Student")
-    print("6. Show Class Topper")
-    print("7. Exit")
-
-
-def main():
-    while True:
-        sm()
-        choice = input("Enter your choice (1-7): ").strip()
-
-        if choice == "1":
-            ast()
-
-        elif choice == "2":
-            vas()
-
-        elif choice == "3":
-            ss()
-
-        elif choice == "4":
-            um()
-
-        elif choice == "5":
-            ds()
-
-        elif choice == "6":
-            ct()
-
-        elif choice == "7":
-            print("Exiting program. Goodbye!")
-            break
-
-        else:
-            print("Invalid choice, please try again.\n")
-
-
-if __name__ == "__main__":
-    main()
+Exiting program. Goodbye!
